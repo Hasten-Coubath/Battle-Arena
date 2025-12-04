@@ -1,0 +1,72 @@
+services:
+  # --- Banco de Dados do Auth Service ---
+  auth-db:
+    image: postgres:15
+    container_name: auth-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    networks:
+      - battle-net
+
+  # --- Banco de Dados do Character Service ---
+  character-db:
+    image: postgres:15
+    container_name: character-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: character_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - character_data:/var/lib/postgresql/data
+    networks:
+      - battle-net
+
+  # --- Banco de Dados do Combat Service ---
+  combat-db:
+    image: postgres:15
+    container_name: combat-db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: combat_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - combat_data:/var/lib/postgresql/data
+    networks:
+      - battle-net
+
+  # --- RabbitMQ (Mensageria) ---
+  rabbitmq:
+    # Troquei de 'alpine' para a versão normal para evitar erros de DNS no Windows
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - battle-net
+
+networks:
+  battle-net:
+    driver: bridge
+
+volumes:
+  auth_data:
+  character_data:
+  combat_data:
